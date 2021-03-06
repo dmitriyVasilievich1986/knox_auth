@@ -1,0 +1,1 @@
+docker run -t --rm -p 8000:8000 --env-file env.conf knox_auth:1.0
