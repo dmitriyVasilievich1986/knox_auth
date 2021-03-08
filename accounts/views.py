@@ -23,6 +23,7 @@ from rest_framework import permissions
 class AccountsViewSet(ViewSet):
     permission_classes = [permissions.AllowAny]
 
+    # region Create
     def create(self, request, *args, **kwargs):
         serializer = AccountsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -37,6 +38,21 @@ class AccountsViewSet(ViewSet):
         }
         return JsonResponse(response)
 
+    @action(detail=False, methods=["POST"])
+    def login(self, request, *args, **kwargs):
+        username = request.data.get("username", None)
+        password = request.data.get("password", None)
+        if username is None or password is None:
+            return JsonResponse({"message": "Bad request"})
+        user = authenticate(username=username, password=password)
+        if user is None:
+            return JsonResponse({"message": "Bad request"})
+        _, token = AuthToken.objects.create(user)
+        return JsonResponse({"token": token})
+
+    # endregion
+
+    # region Read
     def list(self, request, *args, **kwargs):
         instance = request._auth and request._auth.user
         if instance is None:
@@ -55,18 +71,9 @@ class AccountsViewSet(ViewSet):
     def check_token(self, request, *args, **kwargs):
         return JsonResponse({"token": True})
 
-    @action(detail=False, methods=["POST"])
-    def login(self, request, *args, **kwargs):
-        username = request.data.get("username", None)
-        password = request.data.get("password", None)
-        if username is None or password is None:
-            return JsonResponse({"message": "Bad request"})
-        user = authenticate(username=username, password=password)
-        if user is None:
-            return JsonResponse({"message": "Bad request"})
-        _, token = AuthToken.objects.create(user)
-        return JsonResponse({"token": token})
+    # endregion
 
+    # region Update
     def update(self, request, *args, **kwargs):
         instance = request._auth and request._auth.user
         if instance is None:
@@ -78,9 +85,14 @@ class AccountsViewSet(ViewSet):
         serializer.save()
         return Response(serializer.data)
 
+    # endregion
+
+    # region Delete
     def destroy(self, request, *args, **kwargs):
         instance = request._auth and request._auth.user
         if instance is None:
             raise ValidationError("Invalid token")
         request._auth.delete()
         return JsonResponse({"message": "logout"})
+
+    # endregion
