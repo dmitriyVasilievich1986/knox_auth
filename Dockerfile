@@ -13,7 +13,6 @@ ENV DB_PORT=5432
 
 RUN mkdir /app
 WORKDIR /app
-EXPOSE 5432:5432
 
 COPY . /app
 RUN pip install -r requirements.txt
