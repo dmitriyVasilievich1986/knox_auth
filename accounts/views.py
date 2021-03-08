@@ -1,5 +1,4 @@
 # region import libraries
-from django.http.response import JsonResponse
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.shortcuts import render
@@ -29,26 +28,20 @@ class AccountsViewSet(ViewSet):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         _, token = AuthToken.objects.create(user)
-        response = {
-            "first_name": serializer.validated_data.get("first_name", ""),
-            "last_name": serializer.validated_data.get("last_name", ""),
-            "username": serializer.validated_data.get("username", ""),
-            "email": serializer.validated_data.get("email", ""),
-            "token": token,
-        }
-        return JsonResponse(response)
+        return Response({**serializer.data, "token": token})
 
     @action(detail=False, methods=["POST"])
     def login(self, request, *args, **kwargs):
         username = request.data.get("username", None)
         password = request.data.get("password", None)
         if username is None or password is None:
-            return JsonResponse({"message": "Bad request"})
+            return Response({"message": "Bad request"})
         user = authenticate(username=username, password=password)
         if user is None:
-            return JsonResponse({"message": "Bad request"})
+            return Response({"message": "Bad request"})
+        serializer = AccountsSerializer(user)
         _, token = AuthToken.objects.create(user)
-        return JsonResponse({"token": token})
+        return Response({**serializer.data, "token": token})
 
     # endregion
 
@@ -61,7 +54,7 @@ class AccountsViewSet(ViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
-        return JsonResponse({"message": "Bad request"})
+        return Response({"message": "Bad request"})
 
     @action(
         detail=False,
@@ -69,7 +62,7 @@ class AccountsViewSet(ViewSet):
         permission_classes=[permissions.IsAuthenticated],
     )
     def check_token(self, request, *args, **kwargs):
-        return JsonResponse({"token": True})
+        return Response({"token": True})
 
     # endregion
 
@@ -93,6 +86,6 @@ class AccountsViewSet(ViewSet):
         if instance is None:
             raise ValidationError("Invalid token")
         request._auth.delete()
-        return JsonResponse({"message": "logout"})
+        return Response({"message": "logout"})
 
     # endregion
