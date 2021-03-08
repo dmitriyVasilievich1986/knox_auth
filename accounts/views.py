@@ -1,16 +1,11 @@
 # region import libraries
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.shortcuts import render
 
 from .serializer import AccountsSerializer
-from .serializer import AccountsSerializer
-
 from knox.models import AuthToken
-from knox.views import LoginView
 
 from rest_framework.serializers import ValidationError
-from rest_framework_jwt.settings import api_settings
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet
