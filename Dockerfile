@@ -10,6 +10,7 @@ ENV DB_DBNAME=knox_auth
 ENV DB_PASSWORD=root
 ENV DB_USER=postgres
 ENV DB_PORT=5432
+ENV DEBUG=True
 
 RUN mkdir /app
 WORKDIR /app
