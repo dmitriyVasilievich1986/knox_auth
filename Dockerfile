@@ -18,4 +18,4 @@ WORKDIR /app
 COPY . /app
 RUN pip install -r requirements.txt
 
-CMD python start_server.py
+CMD python -u start_server.py

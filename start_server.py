@@ -38,7 +38,7 @@ while MAX_ATTEMPTS:
         conn.close()
         logger.info("Connected successfully")
         break
-    except psycopg2.OperationalError as err:
+    except (psycopg2.OperationalError, Exception) as err:
         logger.error(err)
         MAX_ATTEMPTS -= 1
     MAX_ATTEMPTS and sleep(ATTEMPT_DELAY)
