@@ -1,4 +1,3 @@
-from api.settings import DATABASES
 from django.core.management import execute_from_command_line
 from os import environ
 from time import sleep
