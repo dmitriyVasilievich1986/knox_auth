@@ -43,6 +43,6 @@ while MAX_ATTEMPTS:
     MAX_ATTEMPTS and sleep(ATTEMPT_DELAY)
 
 if MAX_ATTEMPTS:
-    environ.setdefault("DJANGO_SETTINGS_MODULE", "api.settings")
+    environ.setdefault("DJANGO_SETTINGS_MODULE", "auth.settings")
     execute_from_command_line(["manage.py", "migrate"])
     execute_from_command_line(["manage.py", "runserver", f"{HOST}:{PORT}"])
