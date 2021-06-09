@@ -30,10 +30,10 @@ class AccountsViewSet(ViewSet):
         username = request.data.get("username", None)
         password = request.data.get("password", None)
         if username is None or password is None:
-            return Response({"message": "Bad request"})
+            raise ValidationError("Не предоставлены необходимые данные.")
         user = authenticate(username=username, password=password)
         if user is None:
-            return Response({"message": "Bad request"})
+            raise ValidationError("Пользователь не найден.")
         serializer = AccountsSerializer(user)
         _, token = AuthToken.objects.create(user)
         return Response({**serializer.data, "token": token})
