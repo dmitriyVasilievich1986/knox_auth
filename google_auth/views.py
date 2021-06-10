@@ -1,26 +1,27 @@
-from django.shortcuts import render
-from django.http.response import JsonResponse
-from uuid import uuid4
-from urllib.parse import urlencode
-import requests
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.http.response import JsonResponse
+from django.contrib.auth.models import User
+from urllib.parse import urlencode
 from knox.models import AuthToken
+from uuid import uuid4
+from os import environ
+import requests
 
-CLIENT_ID = "331564647878-25bkaorept2gv0lpgeckmvfndsu5jln9.apps.googleusercontent.com"
-CLIENT_SECRET = "RJjBoqXa__jAlwUAr9pLywbH"
-REDIRECT_URI = "http://localhost:80/auth/google_callback/"
+REDIRECT_URI = environ.get("REDIRECT_URI", "http://localhost:80/auth/google_callback/")
+CLIENT_SECRET = environ.get("CLIENT_SECRET")
+CLIENT_ID = environ.get("CLIENT_ID")
 
 
 def get_google_url(request, *args, **kwargs):
     state = str(uuid4())
     params = {
         "scope": "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
-        "state": state,
         "redirect_uri": REDIRECT_URI,
         "response_type": "code",
         "duration": "temporary",
         "client_id": CLIENT_ID,
+        "state": state,
     }
     url = "https://accounts.google.com/o/oauth2/v2/auth?" + urlencode(params)
     return JsonResponse({"url_string": url})
@@ -44,7 +45,12 @@ def google_callback_veiw(request, *args, **kwargs):
         )
         user.save()
     _, knox_token = AuthToken.objects.create(user)
-    return JsonResponse({"token": knox_token, "email": email})
+    return redirect(f"/oauth?token={knox_token}")
+
+
+def g(request, *args, **kwargs):
+    token = request.GET.get("token", "")
+    return JsonResponse({"token": token})
 
 
 def get_token(code, *args, **kwargs):
