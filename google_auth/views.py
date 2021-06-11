@@ -38,7 +38,7 @@ def google_callback_veiw(request, *args, **kwargs):
     user = User.objects.filter(email=email).first()
     if user is None:
         user = User(
-            username=f"user{User.objects.all().count()}",
+            username=email,
             first_name=profile.get("given_name", ""),
             last_name=profile.get("family_name", ""),
             email=email,

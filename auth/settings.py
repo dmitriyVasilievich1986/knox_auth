@@ -3,10 +3,8 @@ import os
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.environ.get(
-    "SECRET", "0hrv*0fp32v+lc$#40m753&ijd&dsufr%ji7!=te=*r(t1d^y_"
-)
 DEBUG = os.environ.get("DEBUG", "") == "True"
+SECRET_KEY = os.environ["SECRET"]
 ALLOWED_HOSTS = ["*"]
 
 
@@ -60,11 +58,11 @@ WSGI_APPLICATION = "auth.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
         "PASSWORD": os.environ.get("DB_PASSWORD", "root"),
         "NAME": os.environ.get("DB_DBNAME", "postgres"),
         "HOST": os.environ.get("DB_HOST", "localhost"),
         "USER": os.environ.get("DB_USER", "postgres"),
+        "ENGINE": "django.db.backends.postgresql",
         "PORT": os.environ.get("DB_PORT", 5432),
     }
 }
