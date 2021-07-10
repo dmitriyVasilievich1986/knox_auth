@@ -2,3 +2,5 @@
 env.conf
 scripts
 .env
+__pycache__
+*.pyc
